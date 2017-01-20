@@ -18,11 +18,11 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
-lib_root="/home/pi/devel/C-Berry/SW/python/"
+lib_root="/home/pi/devel/mumble-bot/cberry/"
 line_offset=15
 font_size=16
 font_size_bottom=14
-bmp_file="/home/pi/devel/mumble_bot/temp.bmp"
+bmp_file="/home/pi/devel/mumble-bot/temp.bmp"
 
 class Cberry:	
 	window=None

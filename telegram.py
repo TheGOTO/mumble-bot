@@ -6,25 +6,8 @@ import time
 import datetime 
 import tools
 import cberry
-from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardHide, ForceReply
+from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, ForceReply
 
-"""
-fix issue https://github.com/nickoala/telepot/issues/87
-
-telepot.api._pools = {
-    'default': urllib3.PoolManager(num_pools=3, maxsize=10, retries=3, timeout=30),
-}
-
-def force_independent_connection(req, **user_kw):
-    return None
-
-telepot.api._which_pool = force_independent_connection	
-
-telepot.api._onetime_pool_spec = (urllib3.PoolManager, dict(num_pools=1, maxsize=1, retries=3, timeout=30))
-	
-
-end fix	-> fixed in telepot 9.0
-"""	
 	
 bot=None 
 token='237430124:AAF9frMQCMB-5K1JmrQNQZs7f5Ervn7-9rE'

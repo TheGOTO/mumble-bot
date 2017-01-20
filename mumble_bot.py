@@ -72,7 +72,7 @@ def main():
 						message+=user+"\t"+ u'\U0000274C'+"\n"#offline
 
 			if message!="":#a registered user is online
-				message="*****************\nPbtH-MumbleV2\n*****************\n"+message#add message to whats app command				
+				message="*****************\nPbtH-Mumble v2.1\n*****************\n"+message#add message to whats app command				
 				#print(message.encode("utf-8").expandtabs())				
 				telegram.send_message(message.encode("utf-8").expandtabs(16))
 
