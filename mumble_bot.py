@@ -44,7 +44,7 @@ def main():
 			
 		one_user_online=False				
 		
-			
+		
 
 		#check if a user is loged in		
 		for user in online_users:		
@@ -52,11 +52,10 @@ def main():
 			if online_users[user]%2!=0:
 				one_user_online=True
 
-				
 		#write to std out or whatsapp
 		if  last_event_counter != event_counter and len(online_users)!=0:	#there is a user stat change		
 			message=""
-			delay=one_minute*5;#wait with the next check 5 minutes		
+			#delay=one_minute*5;#wait with the next check 5 minutes		
 
 			#*****************************************************
 			#********** telegram part****************************
@@ -83,14 +82,19 @@ def main():
 			#********** c-berry part******************************
 			#*****************************************************		
 			
+			
+			
 			if berry==None:				
 				berry=cberry.Cberry()
 				berry.turn_screen_on()
 
+						
+
 			cert_exp=get_cert_validity()
 			ip=getIP()			
 				
-				
+			
+	
 			berry.print_on_screen(online_users,ip,cert_exp)#update screen in any case
 			
 			#write to display
@@ -110,7 +114,7 @@ def get_cert_validity():
 			
  #get ip
 def getIP():	
-	return tools.runCmd('ifconfig eth0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
+	return tools.runCmd('ifconfig wlan0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
 
 
 
@@ -118,7 +122,7 @@ def getIP():
  #get all registered users
 def read_Registered_Users():   
 	mRegistered_users={}
-	query= "sudo sqlite3 /var/lib/mumble-server/mumble-server.sqlite 'SELECT name FROM users'"
+	query= "sqlite3 /var/lib/mumble-server/mumble-server.sqlite 'SELECT name FROM users'"
 
 	p = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	for user in p.stdout.readlines():		

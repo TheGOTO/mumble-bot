@@ -10,6 +10,8 @@ import os
 import pygame
 import sys
 import time
+from signal import alarm, signal, SIGALRM, SIGKILL
+
 
 
 BLACK = (0, 0, 0)
@@ -30,6 +32,7 @@ class Cberry:
 	font2=None
 	font3=None
 	current_line_pos=0
+	
 
 	def __init__(self, filename=None):
 
@@ -37,7 +40,24 @@ class Cberry:
 		
 		pygame.font.init()
 		
+		# this section is an unbelievable nasty hack - for some reason Pygame
+		# needs a keyboardinterrupt to initialise in some limited circs (second time running)
+		class Alarm(Exception):
+			pass
+		def alarm_handler(signum, frame):
+			raise Alarm
+		signal(SIGALRM, alarm_handler)
+		alarm(3)
+		try:
+			#pygame.init()
+			self.window = pygame.display.set_mode((320,240),0,24)#c-berry need 24 bit bmp
+			alarm(0)
+		except Alarm:
+			raise KeyboardInterrupt
+
 		self.window = pygame.display.set_mode((320,240),0,24)#c-berry need 24 bit bmp
+		
+		#print("pygame initalized")
 		
 		self.font1 = pygame.font.SysFont("droidsans", font_size)
 		self.font1.set_bold(1)
