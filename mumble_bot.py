@@ -44,7 +44,7 @@ def main():
 			
 		one_user_online=False				
 		
-		print(event_counter)		
+			
 
 		#check if a user is loged in		
 		for user in online_users:		
@@ -144,6 +144,7 @@ def read_Online_Users():
 	server_start_date = tools.runCmd("sqlite3 /var/lib/mumble-server/mumble-server.sqlite 'SELECT msgtime FROM slog WHERE msg LIKE \"%Server listening on%\" ORDER BY msgtime desc LIMIT 1'")
 		
 	query= "sqlite3 /var/lib/mumble-server/mumble-server.sqlite 'SELECT * FROM slog  WHERE msgtime >=Datetime(\""+server_start_date+"\")' | grep 'Authenticated\\|Connection\\|Rejected'"
+	
 	
 	p = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	for line in p.stdout.readlines():	

@@ -10,7 +10,7 @@ def runCmd(cmd):
 	p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	for line in p.stdout.readlines():		
 		p.wait()
-		ret+=str(line)
+		ret+=line.decode("utf-8")
 	
 	return ret[:-1]#cut \n
 	
