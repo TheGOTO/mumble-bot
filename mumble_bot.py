@@ -6,7 +6,7 @@ import subprocess
 import time
 import cberry
 import telegram
-import thread 
+import _thread as thread
 import tools
 import Objects
 
@@ -44,7 +44,7 @@ def main():
 			
 		one_user_online=False				
 		
-		
+		print(event_counter)		
 
 		#check if a user is loged in		
 		for user in online_users:		
@@ -149,7 +149,7 @@ def read_Online_Users():
 	for line in p.stdout.readlines():	
 			
 		p.wait()
-		sline=line.decode("utf-8") 
+		sline=line.decode("utf-8")# byte to str
 		start = sline.find(":")+1
 		stop = sline.find(">")
 		if start <0 or stop <0:
