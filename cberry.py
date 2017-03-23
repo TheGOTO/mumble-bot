@@ -21,10 +21,12 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 lib_root="/home/pi/devel/mumble-bot/cberry/"
-line_offset=15
+line_offset=16
 font_size=16
 font_size_bottom=14
 bmp_file="/home/pi/devel/mumble-bot/temp.bmp"
+image_file=bmp_file[:-4]
+
 
 class Cberry:	
 	window=None
@@ -59,10 +61,10 @@ class Cberry:
 		
 		#print("pygame initalized")
 		
-		self.font1 = pygame.font.SysFont("droidsans", font_size)
-		self.font1.set_bold(1)
-		self.font2 = pygame.font.SysFont("droidsans",font_size_bottom)
-		self.font2.set_bold(1)
+		self.font1 = pygame.font.SysFont("dejavusans", font_size)
+		#self.font1.set_bold(1)
+		self.font2 = pygame.font.SysFont("dejavusansmono",font_size_bottom)
+		#self.font2.set_bold(1)
 		
 	def turn_screen_on(self):
 		os.system(lib_root+"tft_init")
@@ -76,44 +78,66 @@ class Cberry:
 	def print_on_screen(self,online_users,ip,cert_exp):		
 		lt = time.localtime()			
 		self.window.fill(BLACK)		
-		
-		self.print_line("Date: " +time.strftime("%d/%m/%Y", lt))
-		self.print_line("Time: " +time.strftime("%H:%M:%S", lt))
-		self.print_line("IP: "+ip)
-		self.print_line("")		
+		self.print_line("PbtH Mumble-Bot")
+		self.next_line()
+		self.next_line()
+		self.print_line("Date/Time: "+time.strftime("%Y-%m-%d", lt)+" "+time.strftime("%H:%M:%S", lt))		
+		self.next_line()
+		#self.print_line(ip)
+		#self.next_line()
+		self.next_line()
+				
 		
 		for user in online_users:
-			if online_users[user]%2!=0:
+			user_obj=online_users[user]
+			
+			self.print_line(user_obj.name)
+			
+
+			if user_obj.event_counter%2!=0:
 				color="online"
-				pygame.draw.circle(self.window, GREEN, (150,int(self.current_line_pos+line_offset/2)), 6)
+				pygame.draw.circle(self.window, GREEN, (100,int(self.current_line_pos+line_offset/2)), 6)
+				self.print_line(user_obj.last_event,self.font2,0,110,GREEN)
+				
 			else:
 				color="offline"
-				pygame.draw.circle(self.window, GREEN, (150,int(self.current_line_pos+line_offset/2)), 6, 1)
-			   
-			self.print_line(user)
+				pygame.draw.circle(self.window, WHITE, (100,int(self.current_line_pos+line_offset/2)), 6, 1)
+				self.print_line(user_obj.last_event,self.font2,0,110)
 			
+
+			self.next_line()
 				
-		self.print_line("Cert validity : "+cert_exp,self.font2,200)
+		self.print_line("Certificate: "+cert_exp,self.font1,200)
 			
 			
 		pygame.image.save(self.window, bmp_file)#generate image		
 		os.system(lib_root+"tft_bmp "+bmp_file)	#show image
 		self.current_line_pos=0
 
-	def print_line(self,line,font=None,pos=0):		
-		global current_line_pos
-		
-		position=self.current_line_pos
+	def next_line(self):
+		self.current_line_pos=self.current_line_pos+line_offset	
+
+	def print_line(self,line,font=None,y_pos=0,x_pos=0,color=WHITE):		
+		global current_line_pos		
 		
 		if font==None:
 			font=self.font1
 			
-		if pos!=0:		
-			position=pos
+		if y_pos==0:		
+			y_pos=self.current_line_pos
+
+		line=self.replace_special_chars(line)
 			
-		label2 = font.render(line.encode('utf-8'), True, WHITE,BLACK)	
-		self.window.blit(label2, (0,position))
-		self.current_line_pos=self.current_line_pos+line_offset		
+		label2 = font.render(line.encode('utf-8'), True, color,BLACK)	
+		self.window.blit(label2, (x_pos,y_pos))
+
+	def replace_special_chars(self,value):
+
+		value=value.replace(u'ü', 'ue')
+		value=value.replace(u'ß', 'ss')
+		value=value.replace(u'ö', 'oe')
+		value=value.replace(u'ä', 'ae')	
+		return value
 
 	def clear_screen(self):
 		os.system(lib_root+"tft_clear")

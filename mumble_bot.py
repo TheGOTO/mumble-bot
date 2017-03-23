@@ -9,7 +9,10 @@ import telegram
 import _thread as thread
 import tools
 import Objects
-
+import mumble_chat
+import user
+import time
+from datetime import datetime, timedelta
 
 event_counter=0
 last_event_counter=0
@@ -30,32 +33,38 @@ def main():
 		print("This program is not run as sudo or elevated this it will not work")
 		exit()	
 		
-	thread.start_new_thread(telegram.start,())	
+	telegram.init()	
+	#mumble_chat.init()	
 	print("start mumble_bot")
 
 	delay=one_second#init delay
+	cert_exp=""
+	ip=""
+	
+	
 
 	while True:
 
 		time.sleep(delay);#wait in the release version	
 
-		online_users= read_Online_Users()
-		registeredUsers= read_Registered_Users()
-			
-		one_user_online=False				
 		
-			
+		online_users= read_Online_Users()# set  event_counter
+		registeredUsers= read_Registered_Users()		
+
+
+		one_user_online=False	
 
 		#check if a user is loged in		
-		for user in online_users:		
+		for user in online_users:
+			
 			#print(user+" "+str(online_users[user]))		
-			if online_users[user]%2!=0:
+			if online_users[user].event_counter%2!=0:
 				one_user_online=True
 
 		#write to std out or whatsapp
 		if  last_event_counter != event_counter and len(online_users)!=0:	#there is a user stat change		
 			message=""
-			#delay=one_minute*5;#wait with the next check 5 minutes		
+			delay=one_minute*0.5;#wait with the next check 30 sec		
 
 			#*****************************************************
 			#********** telegram part****************************
@@ -65,7 +74,7 @@ def main():
 			for user in online_users:	
 				if user in registeredUsers.keys():#user is registered
 					#compute message
-					if online_users[user] % 2 != 0:						
+					if online_users[user].event_counter % 2 != 0:						
 						message+=user+"\t"+ u'\U00002705'+"\n"#online
 					else:						
 						message+=user+"\t"+ u'\U0000274C'+"\n"#offline
@@ -83,16 +92,11 @@ def main():
 			#*****************************************************		
 			
 			
-			
 			if berry==None:				
 				berry=cberry.Cberry()
 				berry.turn_screen_on()
-
-						
-
-			cert_exp=get_cert_validity()
-			ip=getIP()			
-				
+				cert_exp=get_cert_validity()
+				ip=getIP()			
 			
 	
 			berry.print_on_screen(online_users,ip,cert_exp)#update screen in any case
@@ -108,7 +112,7 @@ def main():
 
 def get_cert_validity():
 #	cert_exp=tools.runCmd("openssl x509 -in /etc/letsencrypt/live/dom.pbth.de/cert.pem -noout -dates | grep 'notAfter'")				
-	cert_exp=tools.runCmd("openssl s_client -connect dom.pbth.de:64738 -showcerts </dev/null 2>/dev/null|openssl x509 -dates -noout | grep 'notAfter'")				
+	cert_exp=tools.runCmd("openssl s_client -connect dom.pbth.de:64738 -showcerts </dev/null 2>/dev/null|openssl x509 -dates -noout | grep 'notAfter' | cut -c10- ")				
 	start = cert_exp.find("=")+1
 	return cert_exp[start:]#cut first part
 			
@@ -121,25 +125,25 @@ def getIP():
 
  #get all registered users
 def read_Registered_Users():   
-	mRegistered_users={}
+	registered_users={}
 	query= "sqlite3 /var/lib/mumble-server/mumble-server.sqlite 'SELECT name FROM users'"
 
 	p = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	for user in p.stdout.readlines():		
 		p.wait()		
-		user=user[:-1].decode("utf8")#cut \n at the end		
-		mRegistered_users=increase_by_one(mRegistered_users,user)		
-		
+		user=user[:-1].decode("utf8")#cut \n at the end			
+		registered_users[user]=""		
 
-	return mRegistered_users
+	return registered_users
 	
 	
 
- 
+#who is online
 def read_Online_Users():  
 	global event_counter
 	event_counter=0#reset event counter
 	online_users={}
+	
 
 	server_start_date = tools.runCmd("sqlite3 /var/lib/mumble-server/mumble-server.sqlite 'SELECT msgtime FROM slog WHERE msg LIKE \"%Server listening on%\" ORDER BY msgtime desc LIMIT 1'")
 		
@@ -150,7 +154,8 @@ def read_Online_Users():
 	for line in p.stdout.readlines():	
 			
 		p.wait()
-		sline=line.decode("utf-8")# byte to str
+		sline=line.decode("utf-8")# byte to str			
+
 		start = sline.find(":")+1
 		stop = sline.find(">")
 		if start <0 or stop <0:
@@ -159,20 +164,35 @@ def read_Online_Users():
 		substring=sline[start:stop]	
 		stop= substring.rfind('(')		
 		user=substring[:stop]
+
+		last_event=sline[sline.rfind('|')+1:].replace("\n","")		
+		last_event=plus_1_hour(last_event)
+
 		
-		if user!="":#user had a disconnect bevore authentication				
-			online_users=increase_by_one(online_users,user)			
+		if user!="" and user !="bot" :#user had a disconnect bevore authentication or is a bot
+			online_users=update_user(online_users,user,last_event)			
 			event_counter=event_counter+1#update global event counter
 		
-		
+	
 	return online_users
 
-def increase_by_one(dict,key):
-	counter=1#default case 
-	if key in dict.keys():# key is in dict		
-		counter=dict[key]+1;# get the value and increase			
-	dict[key]=counter;#update counter
-	return dict
+
+def plus_1_hour(value):
+
+	date_time= datetime.strptime(value, '%Y-%m-%d %H:%M:%S')+timedelta(hours=1)	
+	return str(date_time)
+
+def update_user(online_users,user_name,time_stamp):
+
+	
+	if user_name in online_users.keys():# key is in dict		
+		 online_users[user_name].event_counter=online_users[user_name].event_counter+1;# get the value and increase
+		 online_users[user_name].last_event=time_stamp
+
+	else:		 		
+		 online_users[user_name]=user.User(user_name,1,time_stamp)#create a new user
+
+	return online_users
 
 
 if __name__ == '__main__':
