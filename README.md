@@ -9,4 +9,7 @@ Features:
 
 Used Hardware
 * c-berry http://www.admatec.de/pdfs/C-Berry_0.pdf
-* Raspberry PI v2
+* Raspberry PI v3
+
+Used Software
+* python 3
