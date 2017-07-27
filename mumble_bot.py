@@ -166,7 +166,11 @@ def read_Online_Users():
 		user=substring[:stop]
 
 		last_event=sline[sline.rfind('|')+1:].replace("\n","")		
-		last_event=plus_1_hour(last_event)
+
+		if time.localtime().tm_isdst: # summertime :-)
+			last_event=plus_x_hour(last_event,2)	
+		else:
+			last_event=plus_x_hour(last_event,1)	
 
 		
 		if user!="" and user !="bot" :#user had a disconnect bevore authentication or is a bot
@@ -177,9 +181,9 @@ def read_Online_Users():
 	return online_users
 
 
-def plus_1_hour(value):
+def plus_x_hour(value,hour):
 
-	date_time= datetime.strptime(value, '%Y-%m-%d %H:%M:%S')+timedelta(hours=1)	
+	date_time= datetime.strptime(value, '%Y-%m-%d %H:%M:%S')+timedelta(hours=hour)	
 	return str(date_time)
 
 def update_user(online_users,user_name,time_stamp):
