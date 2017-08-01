@@ -112,7 +112,7 @@ def main():
 
 def get_cert_validity():
 #	cert_exp=tools.runCmd("openssl x509 -in /etc/letsencrypt/live/dom.pbth.de/cert.pem -noout -dates | grep 'notAfter'")				
-	cert_exp=tools.runCmd("openssl s_client -connect dom.pbth.de:64738 -showcerts </dev/null 2>/dev/null|openssl x509 -dates -noout | grep 'notAfter' | cut -c10- ")				
+	cert_exp=tools.runCmd("openssl s_client -connect localhost:64738 -showcerts </dev/null 2>/dev/null|openssl x509 -dates -noout | grep 'notAfter' | cut -c10- ")				
 	start = cert_exp.find("=")+1
 	return cert_exp[start:]#cut first part
 			
