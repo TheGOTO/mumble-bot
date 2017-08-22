@@ -189,7 +189,7 @@ def plus_x_hour(value,hour):
 def update_user(online_users,user_name,time_stamp):
 
 	
-	if user_name in online_users.keys():# key is in dict		
+	if user_name in online_users.keys():# key is in dict = user is known to us		
 		 online_users[user_name].event_counter=online_users[user_name].event_counter+1;# get the value and increase
 		 online_users[user_name].last_event=time_stamp
 
