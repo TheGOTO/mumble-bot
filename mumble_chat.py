@@ -8,7 +8,6 @@ import telegram
 bot=None
 
 def callback(msg):
-
 	
 	user=bot.users[msg.actor].get_property("name")
 	message=msg.message

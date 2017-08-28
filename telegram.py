@@ -13,20 +13,30 @@ from PIL import Image
 bot=None 
 token='237430124:AAF9frMQCMB-5K1JmrQNQZs7f5Ervn7-9rE'
 chat_id_pbth_group=-176357162
+chat_id_goto=263478717
 
-def init():
+default_chat_id=0
+
+def init(mode):
 	global bot
+	global default_chat_id
 	if bot==None:
 		bot = telepot.Bot(token)	
+		
+	if mode == "release":
+		default_chat_id=chat_id_pbth_group
+	else:
+		default_chat_id=chat_id_goto
 
-
+	print (default_chat_id)
+		
 	bot.message_loop({'chat': handle},relax=0.5,timeout=1)
 
 
 def send_message(msg):
 	global bot
 #	print(msg)		
-	bot.sendMessage(chat_id_pbth_group, msg)
+	bot.sendMessage(default_chat_id, msg)
 	
  
 def handle(msg):
@@ -35,23 +45,25 @@ def handle(msg):
 	command = msg['text'] 
 	user=msg['chat']['first_name']
     	
+		
+	
 	if command == '/time':
 		bot.sendMessage(chat_id,str(datetime.datetime.now()))
 		return
 	elif command == '/info':
 		#bot.sendMessage(chat_id, mumble_info())
 		return
-	if command == '/image':		
+	elif command == '/image':		
 		bmp_img=Image.open(cberry.image_file+".bmp")
 		bmp_img.save(cberry.image_file+".png","PNG")
 		bot.sendPhoto(chat_id, open(cberry.image_file+".png", 'rb'))# open in read byte mode
 		return		
-	if command == '/help':
+	elif command == '/help':
 		message= "PbtH-Mumble-Help\n"+"/time\n"+"/info\n"+"/image\n"+"/help\n"			
 		bot.sendMessage(chat_id,message)		
 		return
 	
-	mumble_chat.send_message(user+":"+command)
+	#mumble_chat.send_message(user+":"+command)
 
 		
 		

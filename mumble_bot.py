@@ -13,6 +13,7 @@ import mumble_chat
 import user
 import time
 from datetime import datetime, timedelta
+import sys
 
 event_counter=0
 last_event_counter=0
@@ -23,6 +24,7 @@ def main():
 		
 	global last_event_counter
 	global event_counter
+	mode="debug"
 	
 	one_minute=60000/1000#seconds
 	one_second=one_minute/60
@@ -33,9 +35,18 @@ def main():
 		print("This program is not run as sudo or elevated this it will not work")
 		exit()	
 		
-	telegram.init()	
+	if len(sys.argv) == 2:			
+		if sys.argv[1] == "--release" or sys.argv[1] == "--debug":
+			mode=sys.argv[1][2:]#cut --
+		else:
+				
+			print(sys.argv[1]+" is not a valid mode (--release or --debug)")
+			exit()			
+	
+		
+	telegram.init(mode)	
 	#mumble_chat.init()	
-	print("start mumble_bot")
+	print("start mumble_bot mode="+mode)
 
 	delay=one_second#init delay
 	cert_exp=""
