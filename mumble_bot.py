@@ -1,6 +1,5 @@
 #https://github.com/azlux/pymumble-> PYMUMBLE python library
 
-
 import os
 import subprocess
 import time
@@ -10,7 +9,6 @@ import _thread as thread
 import tools
 import Objects
 import mumble_chat
-import user
 import time
 from datetime import datetime, timedelta
 import sys

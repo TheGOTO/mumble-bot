@@ -1,0 +1,4 @@
+pygame>=1.9.3
+telepot>=10.4
+thread>=0
+urllib3==1.9.1
