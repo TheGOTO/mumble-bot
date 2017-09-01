@@ -142,7 +142,7 @@ def read_Registered_Users():
 	p = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	for user in p.stdout.readlines():		
 		p.wait()		
-		user=user[:-1].decode("utf8")#cut \n at the end			
+		user=user[:-1].decode("utf-8")#cut \n at the end			
 		registered_users[user]=""		
 
 	return registered_users
@@ -184,7 +184,7 @@ def read_Online_Users():
 			last_event=plus_x_hour(last_event,1)	
 
 		
-		if user!="" and user !="bot" :#user had a disconnect bevore authentication or is a bot
+		if user!="" and user !="PbtH_bot" :#user had a disconnect bevore authentication or is a bot
 			online_users=update_user(online_users,user,last_event)			
 			event_counter=event_counter+1#update global event counter
 		

@@ -11,16 +11,16 @@ def callback(msg):
 	
 	user=bot.users[msg.actor].get_property("name")
 	message=msg.message
-	print(user+":"+message)
+	#print(user+":"+message)
 	telegram.send_message(user+":"+message)
 	
 
 def init():
 	global bot
 
-	bot=mumble.Mumble("localhost","bot",password='pbth',debug=False,reconnect=True)
+	bot=mumble.Mumble("localhost","PbtH_bot",password='pbth',debug=False,reconnect=True)
 
-	bot.set_application_string("bot")
+	bot.set_application_string("telegram <--> mumble chat interface")
 	bot.callbacks.set_callback(constants.PYMUMBLE_CLBK_TEXTMESSAGERECEIVED, callback)
 
 	bot.start()

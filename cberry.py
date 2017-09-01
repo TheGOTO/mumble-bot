@@ -24,7 +24,7 @@ lib_root="/home/pi/devel/mumble-bot/cberry/"
 line_offset=16
 font_size=16
 font_size_bottom=14
-bmp_file="/home/pi/devel/mumble-bot/temp.bmp"
+bmp_file="/home/pi/devel/mumble-bot/img/temp.bmp"
 image_file=bmp_file[:-4]
 
 

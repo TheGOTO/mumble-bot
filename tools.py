@@ -23,8 +23,11 @@ def read_Registered_UsersV2():
 	p = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	for line in p.stdout.readlines():		
 		p.wait()	
-		line=line[:-1]#cut \n at the end		
-		line_array= str.split(line.decode('UTF-8'),'|')#decode byte to str
+		line=line[:-1]#cut \n at the end	
+		
+		
+		line_array= str.split(line.decode('utf-8'),'|')#decode byte to str
+		
 		new_user = Objects.User(line_array[0],line_array[1],line_array[2])
 		
 		mRegistered_users.append(new_user)		
@@ -39,7 +42,7 @@ def read_channels():
 	for line in p.stdout.readlines():		
 		p.wait()	
 		line=line[:-1]#cut \n at the end		
-		line_array= str.split(line.decode('UTF-8'),'|')#decode byte to string
+		line_array= str.split(line.decode('utf-8'),'|')#decode byte to string
 		channels[line_array[0]]=line_array[1]
 
 	return channels
