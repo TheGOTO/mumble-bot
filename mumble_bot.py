@@ -7,7 +7,7 @@ import cberry
 import telegram
 import _thread as thread
 import tools
-import Objects
+import objects
 import mumble_chat
 import time
 from datetime import datetime, timedelta
@@ -203,7 +203,7 @@ def update_user(online_users,user_name,time_stamp):
 		 online_users[user_name].last_event=time_stamp
 
 	else:		 		
-		 online_users[user_name]=user.User(user_name,1,time_stamp)#create a new user
+		 online_users[user_name]=objects.User(user_name,0,time_stamp,1)#create a new user
 
 	return online_users
 

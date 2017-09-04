@@ -1,7 +1,7 @@
  
 
 import subprocess
-import Objects
+import objects
  
  #call a cmd
 def runCmd(cmd):
@@ -28,7 +28,7 @@ def read_Registered_UsersV2():
 		
 		line_array= str.split(line.decode('utf-8'),'|')#decode byte to str
 		
-		new_user = Objects.User(line_array[0],line_array[1],line_array[2])
+		new_user = objects.User(line_array[0],line_array[1],line_array[2],0)
 		
 		mRegistered_users.append(new_user)		
 

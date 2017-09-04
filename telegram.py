@@ -6,11 +6,11 @@ import datetime
 import tools
 import cberry
 from telepot.loop import MessageLoop
-#from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, ForceReply
 import mumble_chat
 import subprocess   
-#sudo apt-get install python3-pil
-from PIL import Image
+import logging
+import multiprocessing
+
 	
 bot=None 
 token='237430124:AAF9frMQCMB-5K1JmrQNQZs7f5Ervn7-9rE'
@@ -28,51 +28,91 @@ def init(mode):
 		default_chat_id=chat_id_pbth_group
 	else:
 		default_chat_id=chat_id_goto
+		logging.getLogger().setLevel(logging.DEBUG)
+		logging.debug('hi from the logger!')
 
-	#print (default_chat_id)
-	
-	
-		
-	#bot.message_loop({'chat': handle},relax=0.5,timeout=1)
+	logging.debug(default_chat_id)	
 	
 	MessageLoop(bot, {'chat': handle}).run_as_thread()
 
 
-def send_message(msg):
-	global bot
-#	print(msg)		
-	bot.sendMessage(default_chat_id, msg)
+def send_message(msg,chat_id=0):
+	if not chat_id:#set to default
+		chat_id=default_chat_id
+
+	logging.debug(msg)		
+	bot.sendMessage(chat_id, msg)
+	
+def send_image_thread(chat_id,file):
+	bot.sendPhoto(chat_id,file)
+	
+def send_image(path,chat_id=0):
+	
+	logging.debug("sending now")	
+	
+	if not chat_id:#set to default
+		chat_id=default_chat_id
+	
+	file=open(path, 'rb')# open in read byte mode
+	
+	logging.debug(file)
+	
+	
+	#**********send with time out**************************
+	p = multiprocessing.Process(target=send_image_thread,args= (chat_id,file))
+	p.start()
+
+    # Wait for 5 seconds or until process finishes
+	p.join(5)
+
+    # If thread is still active
+	if p.is_alive():
+		logging.error("running... let's kill telegram sending...")
+
+        # Terminate
+		p.terminate()
+		p.join()	
+	#**********send with time out**************************
+	
+	
+	file.close()
+	
+	logging.debug("photo send")
 	
  
-def handle(msg):
-	global bot
+def handle(msg):	
 	chat_id = msg['chat']['id']
 	command = msg['text'] 
 	user=msg['chat']['first_name']
+		
+	logger = logging.getLogger()
+	logger.setLevel(level=logging.DEBUG)
+	
+	logging.debug(msg)
+	
 	
 	if command == '/current_time':
-		bot.sendMessage(chat_id,str(datetime.datetime.now()))
-		return
+		send_message(str(datetime.datetime.now()),chat_id)
+		
 	elif command == '/mumble_info':
-		bot.sendMessage(chat_id, mumble_info())
-		return
-	elif command == '/mumble_image':	#!!!not working at all!!! bot hangs completely :fixed:
-		bmp_img=Image.open(cberry.image_file+".bmp")		
-		bmp_img.save(cberry.image_file+".jpg","JPEG") 		
-		ret=bot.sendPhoto(chat_id, open(cberry.image_file+".jpg", 'rb'))# open in read byte mode		
-		return				
+		send_message(mumble_info(),chat_id)
+		
+	elif command == '/mumble_image':	#!!!not working at all!!! bot hangs completely :fixed:		
+		subprocess.check_output("convert "+cberry.image_file+".bmp "+cberry.image_file+".jpg", shell=True)
+		send_image(cberry.image_file+".jpg",chat_id)# open in read byte mode				
+		
 	elif command == '/uptime':	
 		direct_output = subprocess.check_output('uptime', shell=True)
-		bot.sendMessage(chat_id, direct_output)
+		send_message(direct_output,chat_id)
 		
 	elif command == '/who':	
 		direct_output = subprocess.check_output('who', shell=True)
-		bot.sendMessage(chat_id, direct_output)
+		send_message(direct_output,chat_id)
 	
 	elif command == '/wifi':	
 		direct_output = subprocess.check_output('iwconfig wlan0 | grep "Bit \| Quality"', shell=True)
 		
-		bot.sendMessage(chat_id, direct_output)
+		send_message(direct_output,chat_id,)
 		
 	elif command == '/traffic':	
 		subprocess.check_output('vnstati -i wlan0 -h -o /home/pi/devel/mumble-bot/img/vnstat_hourly.png', shell=True)
@@ -82,11 +122,11 @@ def handle(msg):
 		subprocess.check_output('vnstati -i wlan0 -s -o /home/pi/devel/mumble-bot/img/vnstat_summary.png', shell=True)
 		
 		
-		bot.sendPhoto(chat_id, open("/home/pi/devel/mumble-bot/img/vnstat_summary.png", 'rb'))# open in read byte mode
-		#bot.sendPhoto(chat_id, open("/home/pi/devel/mumble-bot/img/vnstat_daily.png", 'rb'))# open in read byte mode
-		bot.sendPhoto(chat_id, open("/home/pi/devel/mumble-bot/img/vnstat_monthly.png", 'rb'))# open in read byte mode
-		bot.sendPhoto(chat_id, open("/home/pi/devel/mumble-bot/img/vnstat_hourly.png", 'rb'))# open in read byte mode
-		bot.sendPhoto(chat_id, open("/home/pi/devel/mumble-bot/img/vnstat_top10.png", 'rb'))# open in read byte mode
+		send_image("/home/pi/devel/mumble-bot/img/vnstat_summary.png",chat_id)# open in read byte mode
+		#send_image("/home/pi/devel/mumble-bot/img/vnstat_daily.png",chat_id)# open in read byte mode
+		send_image("/home/pi/devel/mumble-bot/img/vnstat_monthly.png",chat_id)# open in read byte mode
+		send_image("/home/pi/devel/mumble-bot/img/vnstat_hourly.png",chat_id)# open in read byte mode
+		send_image("/home/pi/devel/mumble-bot/img/vnstat_top10.png",chat_id)# open in read byte mode
 		
 		 
 
@@ -100,12 +140,12 @@ def handle(msg):
 		+"/mumble_info\n advanced mumble info's\n"
 		+"/mumble_image\n show mumble screen\n"
 		+"/help\n show this help\n")	
-		#message= "PbtH-Mumble-Help\n"+"/time\n"+"/info\n"+"/help\n"			
-		bot.sendMessage(chat_id,message)		
-		return
-	
-	#mumble_chat.send_message(user+":"+command)
-
+		
+		send_message(message,chat_id)		
+		
+	else:
+		logging.debug(command)
+		#mumble_chat.send_message(user+":"+command)
 		
 		
 def mumble_info():
