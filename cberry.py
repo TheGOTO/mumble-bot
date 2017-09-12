@@ -97,12 +97,12 @@ class Cberry:
 			if user_obj.event_counter%2!=0:
 				color="online"
 				pygame.draw.circle(self.window, GREEN, (100,int(self.current_line_pos+line_offset/2)), 6)
-				self.print_line(user_obj.last_event,self.font2,0,110,GREEN)
+				self.print_line(user_obj.last_active,self.font2,0,110,GREEN)
 				
 			else:
 				color="offline"
 				pygame.draw.circle(self.window, WHITE, (100,int(self.current_line_pos+line_offset/2)), 6, 1)
-				self.print_line(user_obj.last_event,self.font2,0,110)
+				self.print_line(user_obj.last_active,self.font2,0,110)
 			
 
 			self.next_line()

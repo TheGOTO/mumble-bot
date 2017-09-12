@@ -17,79 +17,101 @@ token='237430124:AAF9frMQCMB-5K1JmrQNQZs7f5Ervn7-9rE'
 chat_id_pbth_group=-176357162
 chat_id_goto=263478717
 default_chat_id=0
+log=None
 
 def init(mode):
 	global bot
 	global default_chat_id
+	global log
 	if bot==None:
 		bot = telepot.Bot(token)	
 		
+	logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+	log = logging.getLogger(__name__)
+	
+		
 	if mode == "release":
 		default_chat_id=chat_id_pbth_group
+		log.setLevel(logging.ERROR)
 	else:
 		default_chat_id=chat_id_goto
-		logging.getLogger().setLevel(logging.DEBUG)
-		logging.debug('hi from the logger!')
+		log.setLevel(logging.DEBUG)
+		log.debug('hi from the debug logger!')
 
-	logging.debug(default_chat_id)	
+	log.debug("chat id= "+default_chat_id)	
 	
 	MessageLoop(bot, {'chat': handle}).run_as_thread()
 
 
+	
 def send_message(msg,chat_id=0):
 	if not chat_id:#set to default
 		chat_id=default_chat_id
-
-	logging.debug(msg)		
-	bot.sendMessage(chat_id, msg)
 	
-def send_image_thread(chat_id,file):
-	bot.sendPhoto(chat_id,file)
+	bot.sendMessage(chat_id, msg)	
+	#call_with_timeout(send_message_thread,(chat_id,msg))
+	
+	
+
+	
 	
 def send_image(path,chat_id=0):
 	
-	logging.debug("sending now")	
+	log.debug("sending now")	
 	
 	if not chat_id:#set to default
 		chat_id=default_chat_id
 	
 	file=open(path, 'rb')# open in read byte mode
 	
-	logging.debug(file)
+	log.debug(file)
 	
-	
-	#**********send with time out**************************
-	p = multiprocessing.Process(target=send_image_thread,args= (chat_id,file))
-	p.start()
-
-    # Wait for 5 seconds or until process finishes
-	p.join(5)
-
-    # If thread is still active
-	if p.is_alive():
-		logging.error("running... let's kill telegram sending...")
-
-        # Terminate
-		p.terminate()
-		p.join()	
-	#**********send with time out**************************
+	#call_with_timeout(send_image_thread,(chat_id,file))	
+	bot.sendPhoto(chat_id,file)
 	
 	
 	file.close()
 	
-	logging.debug("photo send")
+	log.debug("photo send")
+	
+#function will not work because of the Python's Global Interpreter Lock (GIL) -> only one thread at a time
+def call_with_timeout(p_target,p_args,timeout=5):
+
+ 
+	#**********send with time out**************************
+	p = multiprocessing.Process(target=p_target,args= p_args)	
+	
+	log.debug(p)
+	p.start()
+
+	log.debug(p)
+    # Wait for 5 seconds or until process finishes
+	p.join(timeout)
+	log.debug(p)
+	
+    # If thread is still active
+	if p.is_alive():
+		log.error("running... let's kill telegram sending...")
+
+        # Terminate
+		p.terminate()
+		p.join()	
+	else:
+		log.debug("no timeout during send")
+	
+	
+	
+	
+	
+	
 	
  
 def handle(msg):	
 	chat_id = msg['chat']['id']
 	command = msg['text'] 
-	user=msg['chat']['first_name']
+	user=msg['chat']['first_name']	
 		
-	logger = logging.getLogger()
-	logger.setLevel(level=logging.DEBUG)
-	
-	logging.debug(msg)
-	
+	log.debug(msg)	
 	
 	if command == '/current_time':
 		send_message(str(datetime.datetime.now()),chat_id)
@@ -126,8 +148,7 @@ def handle(msg):
 		#send_image("/home/pi/devel/mumble-bot/img/vnstat_daily.png",chat_id)# open in read byte mode
 		send_image("/home/pi/devel/mumble-bot/img/vnstat_monthly.png",chat_id)# open in read byte mode
 		send_image("/home/pi/devel/mumble-bot/img/vnstat_hourly.png",chat_id)# open in read byte mode
-		send_image("/home/pi/devel/mumble-bot/img/vnstat_top10.png",chat_id)# open in read byte mode
-		
+		send_image("/home/pi/devel/mumble-bot/img/vnstat_top10.png",chat_id)# open in read byte mode		
 		 
 
 	elif command == '/help':
@@ -144,7 +165,7 @@ def handle(msg):
 		send_message(message,chat_id)		
 		
 	else:
-		logging.debug(command)
+		log.debug(user+":"+command)
 		#mumble_chat.send_message(user+":"+command)
 		
 		

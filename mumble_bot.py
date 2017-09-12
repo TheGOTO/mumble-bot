@@ -44,7 +44,7 @@ def main():
 		
 	telegram.init(mode)	
 	#mumble_chat.init()	
-	print("start mumble_bot mode="+mode)
+	print("start mumble_bot mode="+mode+" time= "+str(datetime.now()))
 
 	delay=one_second#init delay
 	cert_exp=""
