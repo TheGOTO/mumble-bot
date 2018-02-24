@@ -38,7 +38,7 @@ def init(mode):
 		log.setLevel(logging.DEBUG)
 		log.debug('hi from the debug logger!')
 
-	log.debug("chat id= "+default_chat_id)	
+	log.debug("chat id= "+str(default_chat_id))	
 	
 	MessageLoop(bot, {'chat': handle}).run_as_thread()
 

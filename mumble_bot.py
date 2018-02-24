@@ -200,7 +200,7 @@ def update_user(online_users,user_name,time_stamp):
 	
 	if user_name in online_users.keys():# key is in dict = user is known to us		
 		 online_users[user_name].event_counter=online_users[user_name].event_counter+1;# get the value and increase
-		 online_users[user_name].last_event=time_stamp
+		 online_users[user_name].last_active=time_stamp
 
 	else:		 		
 		 online_users[user_name]=objects.User(user_name,0,time_stamp,1)#create a new user
