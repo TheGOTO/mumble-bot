@@ -1,3 +1,6 @@
+# wrapper for telepot
+# https://github.com/nickoala/telepot
+
 import sys
 import telepot
 import urllib3

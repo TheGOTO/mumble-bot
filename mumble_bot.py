@@ -4,7 +4,7 @@ import os
 import subprocess
 import time
 import cberry
-import telegram
+import telegram_v2
 import _thread as thread
 import tools
 import objects
