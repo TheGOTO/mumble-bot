@@ -13,12 +13,11 @@ import mumble_chat
 import subprocess   
 import logging
 import multiprocessing
+import telegram_private
 
 	
 bot=None 
-token='237430124:AAF9frMQCMB-5K1JmrQNQZs7f5Ervn7-9rE'
-chat_id_pbth_group=-176357162
-chat_id_goto=263478717
+
 default_chat_id=0
 log=None
 
@@ -27,17 +26,17 @@ def init(mode):
 	global default_chat_id
 	global log
 	if bot==None:
-		bot = telepot.Bot(token)	
+		bot = telepot.Bot(telegram_private.token)	
 		
 	logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 	log = logging.getLogger(__name__)
 	
 		
 	if mode == "release":
-		default_chat_id=chat_id_pbth_group
+		default_chat_id=telegram_private.chat_id_pbth_group
 		log.setLevel(logging.ERROR)
 	else:
-		default_chat_id=chat_id_goto
+		default_chat_id=telegram_private.chat_id_goto
 		log.setLevel(logging.DEBUG)
 		log.debug('hi from the debug logger!')
 
@@ -194,7 +193,7 @@ fix keyboard
 def hide_keyborad():
 	global bot	
 	markup = ReplyKeyboardHide()
-	bot.sendMessage(chat_id_pbth_group, 'connection reset', reply_markup=markup)
+	bot.sendMessage(telegram_private.chat_id_pbth_group, 'connection reset', reply_markup=markup)
 """
 
 

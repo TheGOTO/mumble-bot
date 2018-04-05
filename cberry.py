@@ -9,8 +9,10 @@
 import os
 import pygame
 import sys
+
 import time
 from signal import alarm, signal, SIGALRM, SIGKILL
+
 
 
 
@@ -142,6 +144,8 @@ class Cberry:
 	def clear_screen(self):
 		os.system(lib_root+"tft_clear")
 		return
+		
+
 		
 	
 

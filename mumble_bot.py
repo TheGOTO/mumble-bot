@@ -4,14 +4,17 @@ import os
 import subprocess
 import time
 import cberry
-import telegram_v2
+import telegram_v2 as telegram
+#import telegram_v1 as telegram
 import _thread as thread
 import tools
 import objects
 import mumble_chat
 import time
+from signal import signal, SIGINT, SIGTERM, SIGABRT
 from datetime import datetime, timedelta
 import sys
+
 
 event_counter=0
 last_event_counter=0
@@ -43,18 +46,24 @@ def main():
 	
 		
 	telegram.init(mode)	
-	#mumble_chat.init()	
+	#mumble_chat.init()
+	
+	
+		
+	
 	print("start mumble_bot mode="+mode+" time= "+str(datetime.now()))
 
 	delay=one_second#init delay
 	cert_exp=""
 	ip=""
 	
-	
+		
 
 	while True:
 
-		time.sleep(delay);#wait in the release version	
+		#time.sleep(delay);#wait in the release version	
+		
+		time.sleep(1)
 
 		
 		online_users= read_Online_Users()# set  event_counter
@@ -101,19 +110,19 @@ def main():
 			#*****************************************************		
 			
 			
-			if berry==None:				
-				berry=cberry.Cberry()
-				berry.turn_screen_on()
-				cert_exp=get_cert_validity()
-				ip=getIP()			
+			# if berry==None:							
+				# berry=cberry.Cberry()
+				# berry.turn_screen_on()
+				# cert_exp=get_cert_validity()
+				# ip=getIP()			
 			
 	
-			berry.print_on_screen(online_users,ip,cert_exp)#update screen in any case
+			# berry.print_on_screen(online_users,ip,cert_exp)#update screen in any case
 			
-			#write to display
-			if(one_user_online==False):#there aren't online users	
-				berry.turn_screen_off()
-				berry=None
+			# #write to display
+			# if(one_user_online==False):#there aren't online users	
+				# berry.turn_screen_off()
+				# berry=None
 		else:
 			delay=one_second#reset delay
 				
