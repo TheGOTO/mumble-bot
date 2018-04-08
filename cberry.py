@@ -9,7 +9,7 @@
 import os
 import pygame
 import sys
-
+import subprocess   
 import time
 from signal import alarm, signal, SIGALRM, SIGKILL
 
@@ -28,6 +28,7 @@ font_size=16
 font_size_bottom=14
 bmp_file="/home/pi/devel/mumble-bot/img/temp.bmp"
 image_file=bmp_file[:-4]
+telegram_user_group="telegram:telegram"
 
 
 class Cberry:	
@@ -112,7 +113,10 @@ class Cberry:
 		self.print_line("Certificate: "+cert_exp,self.font1,200)
 			
 			
-		pygame.image.save(self.window, bmp_file)#generate image		
+		pygame.image.save(self.window, bmp_file)#generate image	
+		subprocess.check_output('chown ' +telegram_user_group+' '+bmp_file, shell=True)#change permission
+		
+		
 		os.system(lib_root+"tft_bmp "+bmp_file)	#show image
 		self.current_line_pos=0
 

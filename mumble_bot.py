@@ -32,9 +32,9 @@ def main():
 
 	berry =None	
 	
-	if os.getuid() != 0:
-		print("This program is not run as sudo or elevated this it will not work")
-		exit()	
+	#if os.getuid() != 0:
+	#	print("This program is not run as sudo or elevated this it will not work")
+	#	exit()	
 		
 	if len(sys.argv) == 2:			
 		if sys.argv[1] == "--release" or sys.argv[1] == "--debug":

@@ -26,3 +26,4 @@ start the bot:
 python3 mumble_bot.py --release
 python3 cberry_bot.py
 
+#we assume a user "telegram" to execute  mumble_bot.py 
