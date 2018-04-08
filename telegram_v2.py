@@ -9,6 +9,8 @@ import subprocess
 import logging
 import telegram_private
 import subprocess   
+import cberry
+import tools
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
@@ -50,9 +52,16 @@ def init(mode='debug'):
 	 # Get the dispatcher to register handlers
 	dp = updater.dispatcher
 
-	dp.add_handler(CommandHandler("test", test))
+	
 	dp.add_handler(CommandHandler("help", help))
 	dp.add_handler(CommandHandler("traffic", traffic))
+	dp.add_handler(CommandHandler("current_time", current_time))
+	dp.add_handler(CommandHandler("mumble_info", mumble_info))
+	dp.add_handler(CommandHandler("mumble_image", mumble_image))
+	dp.add_handler(CommandHandler("uptime", uptime))
+	dp.add_handler(CommandHandler("who", who))
+		
+	
 	dp.add_error_handler(error)
 	#dp.add_handler(MessageHandler(Filters.text, echo))
 	
@@ -63,19 +72,32 @@ def init(mode='debug'):
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
 	#updater.idle()
-
-
 	
-	
-	
-def test(bot, update):
-    """Send a message when the command /test is issued."""
-    update.message.reply_text('Hi!')
 
 
 def echo(bot, update):
     """Echo the user message."""
     update.message.reply_text(update.message.text)
+	
+	
+def current_time(bot, update):		
+		update.message.reply_text(str(datetime.datetime.now()))
+		
+def mumble_info(bot,update):		
+		update.message.reply_text(_mumble_info())
+		
+def mumble_image(bot,update):	
+		chat_id = update.message.chat_id
+		subprocess.check_output("convert "+cberry.image_file+".bmp "+cberry.image_file+".jpg", shell=True)
+		send_image(cberry.image_file+".jpg",chat_id)# open in read byte mode				
+		
+def uptime(bot,update):			
+		direct_output = subprocess.check_output('uptime', shell=True)
+		update.message.reply_text(direct_output.decode("utf-8"))		
+		
+def who(bot,update):	
+		direct_output = subprocess.check_output('who', shell=True)
+		update.message.reply_text(direct_output.decode("utf-8"))
 	
 def traffic(bot, update):
 
@@ -97,13 +119,12 @@ def traffic(bot, update):
 	
 def help(bot, update):	
 		message= ("PbtH-Mumble-Help\n"
-		#+"/current_time\n show server time\n"
-		#+"/uptime\n server up time\n"
-		#+"/who\n who is logged in\n"
-		#+"/wifi\n show wi-fi status\n"
+		+"/current_time\n show server time\n"
+		+"/uptime\n server up time\n"
+		+"/who\n who is logged in\n"		
 		+"/traffic\n show current traffic\n"
-		#+"/mumble_info\n advanced mumble info's\n"
-		#+"/mumble_image\n show mumble screen\n"
+		+"/mumble_info\n advanced mumble info's\n"
+		+"/mumble_image\n show mumble screen\n"
 		+"/help\n show this help\n")	
 		
 		update.message.reply_text(message)
@@ -140,6 +161,19 @@ def send_image(path,chat_id=0):
 	file.close()
 	
 	log.debug("photo send")
+	
+	
+def _mumble_info():
+	
+	mRegistered_users= tools.read_Registered_UsersV2()
+	channels= tools.read_channels()
+	message =""
+	for user in mRegistered_users[1:]:	#ignore first
+
+		channel=channels[user.lastchannel]
+		message+=user.name+"@"+channel+"\n"+user.last_active+"\n"	
+	
+	return message
 	
 	
 
