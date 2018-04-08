@@ -24,6 +24,7 @@ chat_id_goto / id of the chat group for the debug version of the bot
 
 start the bot:
 python3 mumble_bot.py --release
-python3 cberry_bot.py
-
 #we assume a user "telegram" to execute  mumble_bot.py 
+
+python3 cberry_bot.py
+#cberry need root permission
