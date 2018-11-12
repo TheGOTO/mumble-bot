@@ -2,7 +2,7 @@
 import sys
 sys.path.append('/home/pi/devel/pymumble/')
 from pymumble_py3 import mumble, constants 
-import telegram
+import telegram_v2 as telegram
 
 
 bot=None
