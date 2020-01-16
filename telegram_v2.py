@@ -28,7 +28,7 @@ def init(mode='debug'):
 	global default_chat_id
 	global log
 	if updater==None:		
-		updater = Updater(telegram_private.token)	
+		updater = Updater(telegram_private.token,use_context=True)	
 	else:
 		return
 		
