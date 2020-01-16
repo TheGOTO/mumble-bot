@@ -75,31 +75,31 @@ def init(mode='debug'):
 	
 
 
-def echo(bot, update):
+def echo(update,context):
     """Echo the user message."""
     update.message.reply_text(update.message.text)
 	
 	
-def current_time(bot, update):		
+def current_time(update,context):		
 		update.message.reply_text(str(datetime.datetime.now()))
 		
-def mumble_info(bot,update):		
+def mumble_info(update,context):		
 		update.message.reply_text(_mumble_info())
 		
-def mumble_image(bot,update):	
+def mumble_image(update,context):	
 		chat_id = update.message.chat_id
 		subprocess.check_output("convert "+cberry.image_file+".bmp "+cberry.image_file+".jpg", shell=True)
 		send_image(cberry.image_file+".jpg",chat_id)# open in read byte mode				
 		
-def uptime(bot,update):			
+def uptime(update,context):			
 		direct_output = subprocess.check_output('uptime', shell=True)
 		update.message.reply_text(direct_output.decode("utf-8"))		
 		
-def who(bot,update):	
+def who(update,context):	
 		direct_output = subprocess.check_output('who', shell=True)
 		update.message.reply_text(direct_output.decode("utf-8"))
 	
-def traffic(bot, update):
+def traffic(update,context):
 
 		chat_id = update.message.chat_id
 
@@ -117,7 +117,7 @@ def traffic(bot, update):
 		send_image("/home/pi/devel/mumble-bot/img/vnstat_top10.png",chat_id)# open in read byte mode		
 		
 	
-def help(bot, update):	
+def help(update,context):	
 		message= ("PbtH-Mumble-Help\n"
 		+"/current_time\n show server time\n"
 		+"/uptime\n server up time\n"
@@ -127,12 +127,13 @@ def help(bot, update):
 		+"/mumble_image\n show mumble screen\n"
 		+"/help\n show this help\n")	
 		
+		
 		update.message.reply_text(message)
 
 
-def error(bot, update, error):
+def error(update, context):
     """Log Errors caused by Updates."""
-    log.error('Update "%s" caused error "%s"', update, error)
+    log.error('Update "%s" caused error "%s"', context,context.error)
 	
 	
 def send_message(p_msg,p_chat_id=0):	
