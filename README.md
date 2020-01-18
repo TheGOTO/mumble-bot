@@ -28,3 +28,4 @@ python3 mumble_bot.py --release
 
 python3 cberry_bot.py
 #cberry need root permission
+
