@@ -105,24 +105,7 @@ def main():
 			last_event_counter = event_counter;#reset event counter
 
 
-			#*****************************************************
-			#********** c-berry part******************************
-			#*****************************************************		
-			
-			
-			# if berry==None:							
-				# berry=cberry.Cberry()
-				# berry.turn_screen_on()
-				# cert_exp=get_cert_validity()
-				# ip=getIP()			
-			
-	
-			# berry.print_on_screen(online_users,ip,cert_exp)#update screen in any case
-			
-			# #write to display
-			# if(one_user_online==False):#there aren't online users	
-				# berry.turn_screen_off()
-				# berry=None
+		
 		else:
 			delay=one_second#reset delay
 				
