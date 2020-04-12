@@ -142,6 +142,7 @@ def send_message(p_msg,p_chat_id=0):
 		p_chat_id=default_chat_id
 	
 	updater.bot.send_message(p_chat_id, p_msg.decode("utf-8") )
+	log.debug(p_msg.decode("utf-8"))
 	
 	
 def send_image(path,chat_id=0):

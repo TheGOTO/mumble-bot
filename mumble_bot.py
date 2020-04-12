@@ -1,6 +1,6 @@
 #https://github.com/azlux/pymumble-> PYMUMBLE python library
 
-import os
+import os, sys
 import subprocess
 import time
 import cberry
@@ -64,10 +64,14 @@ def main():
 		#time.sleep(delay);#wait in the release version	
 		
 		time.sleep(1)
-
+		
+		
 		
 		online_users= read_Online_Users()# set  event_counter
-		registeredUsers= read_Registered_Users()		
+		registeredUsers= read_Registered_Users()	
+		
+		
+		
 
 
 		one_user_online=False	
@@ -147,15 +151,27 @@ def read_Online_Users():
 	
 
 	server_start_date = tools.runCmd("sqlite3 /var/lib/mumble-server/mumble-server.sqlite 'SELECT msgtime FROM slog WHERE msg LIKE \"%Server listening on%\" ORDER BY msgtime desc LIMIT 1'")
+	
+	if server_start_date == "": 
+		# online user can not be identified
+		telegram.log.error("Server Start Date could net be read  -> mumble server restart required")
+		telegram.updater.stop()
+		sys.exit(0)
 		
 	query= "sqlite3 /var/lib/mumble-server/mumble-server.sqlite 'SELECT * FROM slog  WHERE msgtime >=Datetime(\""+server_start_date+"\")' | grep 'Authenticated\\|Connection\\|Rejected'"
 	
 	
+	
 	p = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	
+	
+	
 	for line in p.stdout.readlines():	
 			
 		p.wait()
-		sline=line.decode("utf-8")# byte to str			
+		sline=line.decode("utf-8")# byte to str
+		
+					
 
 		start = sline.find(":")+1
 		stop = sline.find(">")
