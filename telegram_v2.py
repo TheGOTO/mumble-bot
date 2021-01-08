@@ -11,7 +11,8 @@ import telegram_private
 import subprocess   
 import cberry
 import tools
-
+import os
+import signal
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 	
@@ -31,14 +32,14 @@ def init(mode='debug'):
 		updater = Updater(telegram_private.token,use_context=True)	
 	else:
 		return
-		
+
 	logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-	
+
 	#logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.DEBUG)
-	
+
 	log = logging.getLogger(__name__)
-	
-		
+
+
 	if mode == "release":
 		default_chat_id=telegram_private.chat_id_pbth_group
 		log.setLevel(logging.ERROR)
@@ -52,7 +53,6 @@ def init(mode='debug'):
 	 # Get the dispatcher to register handlers
 	dp = updater.dispatcher
 
-	
 	dp.add_handler(CommandHandler("help", help))
 	dp.add_handler(CommandHandler("traffic", traffic))
 	dp.add_handler(CommandHandler("current_time", current_time))
@@ -72,7 +72,9 @@ def init(mode='debug'):
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
 	#updater.idle()
-	
+
+def shutdown():
+	os.kill(os.getpid(), signal.SIGKILL)
 
 
 def echo(update,context):

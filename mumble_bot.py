@@ -22,11 +22,11 @@ last_event_counter=0
 
 # THIS IS THE MAIN ROUTINE --. START OF THE PROGRAM
 def main():
-		
+
 	global last_event_counter
 	global event_counter
 	mode="debug"
-	
+
 	one_minute=60000/1000#seconds
 	one_second=one_minute/60
 
@@ -35,50 +35,50 @@ def main():
 	#if os.getuid() != 0:
 	#	print("This program is not run as sudo or elevated this it will not work")
 	#	exit()	
-		
+
 	if len(sys.argv) == 2:			
 		if sys.argv[1] == "--release" or sys.argv[1] == "--debug":
 			mode=sys.argv[1][2:]#cut --
 		else:
-				
+
 			print(sys.argv[1]+" is not a valid mode (--release or --debug)")
 			exit()			
-	
-		
+
 	telegram.init(mode)	
 	#mumble_chat.init()
-	
-	
-		
-	
+
+
+
+
 	print("start mumble_bot mode="+mode+" time= "+str(datetime.now()))
 
 	delay=one_second#init delay
 	cert_exp=""
 	ip=""
-	
-		
+
+
 
 	while True:
 
 		#time.sleep(delay);#wait in the release version	
-		
+
 		time.sleep(1)
-		
-		
-		
+
+
 		online_users= read_Online_Users()# set  event_counter
 		registeredUsers= read_Registered_Users()	
-		
-		
-		
+
+		if online_users==  "sql_no_time_error":
+			# online user can not be identified
+			telegram.send_message("Server Start Date could not be read  -> mumble server restart required".encode("utf-8"),telegram.telegram_private.chat_id_goto)
+			telegram.shutdown()#die here
 
 
 		one_user_online=False	
 
 		#check if a user is loged in		
 		for user in online_users:
-			
+
 			#print(user+" "+str(online_users[user]))		
 			if online_users[user].event_counter%2!=0:
 				one_user_online=True
@@ -153,10 +153,7 @@ def read_Online_Users():
 	server_start_date = tools.runCmd("sqlite3 /var/lib/mumble-server/mumble-server.sqlite 'SELECT msgtime FROM slog WHERE msg LIKE \"%Server listening on%\" ORDER BY msgtime desc LIMIT 1'")
 	
 	if server_start_date == "": 
-		# online user can not be identified
-		telegram.log.error("Server Start Date could net be read  -> mumble server restart required")
-		telegram.updater.stop()
-		sys.exit(0)
+		return "sql_no_time_error"
 		
 	query= "sqlite3 /var/lib/mumble-server/mumble-server.sqlite 'SELECT * FROM slog  WHERE msgtime >=Datetime(\""+server_start_date+"\")' | grep 'Authenticated\\|Connection\\|Rejected'"
 	
